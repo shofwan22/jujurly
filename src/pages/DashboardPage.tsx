@@ -11,6 +11,7 @@ const API_BASE_URL = 'http://localhost:5001'; // Backend API base URL
 interface FeedbackItem {
   id: number;
   timestamp: string; // ISO 8601 string from backend
+  sender: string;
   context: string;
   sentiment: string; // Includes emoji from backend
   summary: string;
@@ -118,7 +119,8 @@ const DashboardPage: React.FC = () => {
           <div className="feedback-list">
             {feedbacks.map(fb => (
               <div key={fb.id} className="feedback-item">
-                <h3>Feedback dari: Anonim</h3>
+                <h3>Feedback #{fb.id}</h3>
+                <p><strong>Pengirim:</strong> {fb.sender || 'Anonim'}</p>
                 <p><strong>Waktu:</strong> {formatTimestamp(fb.timestamp)}</p>
                 {fb.context && fb.context !== '-' && <p><strong>Konteks:</strong> {fb.context}</p>}
                 <p><strong>Sentimen:</strong> <span className={`sentiment ${getSentimentClass(fb.sentiment)}`}>{fb.sentiment}</span></p>

@@ -100,23 +100,25 @@
   font-weight: bold;
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
-  color: #fff;
+  color: #888;
   display: inline-block;
   font-size: 0.9rem;
 }
 
 .sentiment-banget {
   background-color: #28a745; /* Green for Positif Banget */
+  color: #fff; /* Added for better contrast */
 }
 
 .sentiment-negatif {
   background-color: #dc3545; /* Red for Agak Negatif */
+  color: #fff; /* Added for better contrast */
 }
 
 .sentiment-aja {
   background-color: #6c757d; /* Gray for Netral Aja */
+  color: #fff; /* Added for better contrast */
 }
-
 .dashboard-footer {
   text-align: center;
   padding: 2rem;

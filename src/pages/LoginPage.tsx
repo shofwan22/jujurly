@@ -45,8 +45,29 @@ const LoginPage: React.FC = () => {
         // localStorage.setItem('userToken', data.token); // If backend returns a token
         navigate('/dashboard'); 
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Login gagal. Periksa kembali email/username dan password kamu.');
+        let errorDisplayMessage = 'Login gagal. Periksa kembali email/username dan password kamu.';
+        // Log the raw response status
+        console.error(`Login API request failed with status: ${response.status}`);
+        try {
+          const errorData = await response.json();
+          // Log the detailed error from the backend if available
+          console.error('Backend error details:', errorData);
+          if (errorData && errorData.message) {
+            errorDisplayMessage = errorData.message;
+          }
+        } catch (jsonParseError) {
+          // This catch block handles errors if response.json() fails (e.g., empty response or not JSON)
+          console.error('Failed to parse backend error response as JSON:', jsonParseError);
+          // You could try to get text from the response if JSON parsing fails:
+          // try {
+          //   const textError = await response.text();
+          //   console.error('Backend error response text:', textError);
+          //   if (textError) errorDisplayMessage = textError;
+          // } catch (textParseError) {
+          //   console.error('Failed to get text from backend error response:', textParseError);
+          // }
+        }
+        setError(errorDisplayMessage);
       }
       
     } catch (err) {
