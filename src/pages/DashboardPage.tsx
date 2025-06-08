@@ -1,12 +1,80 @@
 // src/pages/DashboardPage.tsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './DashboardPage.css'; // We'll create this CSS file
 
 // Placeholder for actual authentication and data fetching logic
 const isAuthenticated = true; // Assume user is logged in for now
 const username = "iganarendra"; // Placeholder username
+const API_BASE_URL = 'http://localhost:5001'; // Backend API base URL
+
+interface FeedbackItem {
+  id: number;
+  timestamp: string; // ISO 8601 string from backend
+  context: string;
+  sentiment: string; // Includes emoji from backend
+  summary: string;
+  constructiveCriticism: string;
+}
+
+// Function to format ISO date string to a more readable format
+const formatTimestamp = (isoString: string): string => {
+  const date = new Date(isoString);
+  return date.toLocaleString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short'
+  });
+};
+
+// Function to get a CSS class based on sentiment string
+const getSentimentClass = (sentimentString: string): string => {
+  const lowerSentiment = sentimentString.toLowerCase();
+  if (lowerSentiment.includes('positif')) return 'sentiment-positif';
+  if (lowerSentiment.includes('negatif')) return 'sentiment-negatif';
+  // Default to neutral if no specific keyword found or if it's explicitly neutral
+  return 'sentiment-netral';
+};
+
+
+// Updated API function to fetch data from the backend
+const fetchFeedbacksForUser = async (user: string): Promise<FeedbackItem[]> => {
+  console.log(`Fetching feedback for ${user} from backend...`);
+  const response = await fetch(`${API_BASE_URL}/api/users/${user}/feedbacks`);
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: 'Failed to fetch feedbacks and parse error' }));
+    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+  }
+  const data: FeedbackItem[] = await response.json();
+  return data;
+};
 
 const DashboardPage: React.FC = () => {
+  const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isAuthenticated && username) {
+      setIsLoading(true);
+      setError(null);
+      fetchFeedbacksForUser(username)
+        .then(data => {
+          setFeedbacks(data);
+          setIsLoading(false);
+        })
+        .catch(err => {
+          console.error("Failed to fetch feedbacks:", err);
+          setError(err.message || "Duh, gagal ngambil feedback nih. Coba lagi nanti ya.");
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false); // Not authenticated or no username
+    }
+  }, [username]); // Refetch if username changes
+
   if (!isAuthenticated) {
     // Later, this could redirect to a login/signup page
     return (
@@ -24,34 +92,6 @@ const DashboardPage: React.FC = () => {
 
   const feedbackLink = `https://jujur.ly/ke/${username}`;
 
-  // Placeholder feedback data
-  const feedbacks = [
-    {
-      id: 1,
-      timestamp: 'Kemarin, 10:30 WIB',
-      context: 'Pas presentasi proyek Z',
-      sentiment: 'Positif Banget 👍',
-      summary: 'Katanya sih presentasinya keren, jelas, dan bikin semangat.',
-      constructiveCriticism: 'Mungkin slide bisa ditambahin gambar biar makin asik.'
-    },
-    {
-      id: 2,
-      timestamp: '2 hari lalu, 15:00 WIB',
-      context: 'Lagi nongkrong di kafe X',
-      sentiment: 'Agak Negatif 😟',
-      summary: 'Kayaknya kamu keliatan capek banget dan kurang fokus pas diajak ngobrol.',
-      constructiveCriticism: 'Coba istirahat yang cukup ya, biar energinya balik lagi.'
-    },
-    {
-      id: 3,
-      timestamp: 'Minggu lalu',
-      context: '-',
-      sentiment: 'Netral Aja 😐',
-      summary: 'Overall oke sih, tapi ada beberapa hal kecil yang bisa ditingkatin.',
-      constructiveCriticism: 'Detailnya kurang spesifik, mungkin bisa lebih jelas lagi lain kali.'
-    }
-  ];
-
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -60,16 +100,19 @@ const DashboardPage: React.FC = () => {
       </header>
       <main className="dashboard-main">
         <h2>Ini Dia Feedback Buat Kamu:</h2>
-        {feedbacks.length === 0 ? (
+        {isLoading && <p>Lagi ngambil feedback, sabar ya...</p>}
+        {error && <p className="error-message">{error}</p>}
+        {!isLoading && !error && feedbacks.length === 0 && (
           <p>Belum ada feedback nih. Coba sebarin link kamu gih!</p>
-        ) : (
+        )}
+        {!isLoading && !error && feedbacks.length > 0 && (
           <div className="feedback-list">
             {feedbacks.map(fb => (
               <div key={fb.id} className="feedback-item">
                 <h3>Feedback dari: Anonim</h3>
-                <p><strong>Waktu:</strong> {fb.timestamp}</p>
-                {fb.context !== '-' && <p><strong>Konteks:</strong> {fb.context}</p>}
-                <p><strong>Sentimen:</strong> <span className={`sentiment sentiment-${fb.sentiment.split(' ')[1].toLowerCase()}`}>{fb.sentiment}</span></p>
+                <p><strong>Waktu:</strong> {formatTimestamp(fb.timestamp)}</p>
+                {fb.context && fb.context !== '-' && <p><strong>Konteks:</strong> {fb.context}</p>}
+                <p><strong>Sentimen:</strong> <span className={`sentiment ${getSentimentClass(fb.sentiment)}`}>{fb.sentiment}</span></p>
                 <div className="feedback-content">
                   <h4>Ringkasan (dari LLM):</h4>
                   <p>{fb.summary}</p>

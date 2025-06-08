@@ -1,9 +1,12 @@
 // src/components/FeedbackForm.tsx
-import { useState } from 'react';
-import '../App.css' // Assuming App.css contains the relevant styles
+import { useState, useEffect } from 'react';
+import '../App.css';
 
-// This is the refactored App.tsx content, now as a component
-function FeedbackForm() {
+interface FeedbackFormProps {
+  userId: string;
+}
+
+function FeedbackForm({ userId }: FeedbackFormProps) {
   const [step, setStep] = useState(1);
   const [anonIdentifier, setAnonIdentifier] = useState('');
   const [feedbackText, setFeedbackText] = useState('');
@@ -11,6 +14,18 @@ function FeedbackForm() {
   const [emailOptIn, setEmailOptIn] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [targetUserName, setTargetUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+    // In a real app, you might fetch user details here based on userId
+    // to display something like "You are giving feedback to [UserName]"
+    // For now, we'll just use the userId itself.
+    if (userId) {
+      setTargetUserName(userId); // Replace with actual name fetching if API exists
+    } else {
+      setTargetUserName(null);
+    }
+  }, [userId]);
 
   const nextStep = () => setStep(step + 1);
 
@@ -19,22 +34,16 @@ function FeedbackForm() {
     setIsLoading(true);
     setMessage('');
 
-    // Attempt to get link_id from the URL path, e.g., /f/your-link-id
-    // This is a simple extraction, adjust if your routing is different
-    const pathParts = window.location.pathname.split('/');
-    const linkId = pathParts[pathParts.length - 1]; // Assumes link_id is the last part
-
-    if (!linkId || pathParts[pathParts.length - 2] !== 'ke') { // Example check: URL should be like /f/linkid
-        setMessage("Error: Link ID tidak ditemukan di URL. Pastikan URLnya benar, contoh: jujur.ly/ke/abcdef12");
-        setIsLoading(false);
-        return;
+    if (!userId) { // This check might be redundant if FeedbackPage ensures userId is always passed
+      setMessage("Error: User ID tidak ditemukan. Pastikan URLnya benar, contoh: jujur.ly/ke/namauser");
+      setIsLoading(false);
+      return;
     }
 
-    // For Vite, use import.meta.env
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'; 
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
     try {
-      const response = await fetch(`${API_URL}/api/feedback/${linkId}`, {
+      const response = await fetch(`${API_URL}/api/feedback/${userId}`, { // Use userId from prop
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,8 +51,8 @@ function FeedbackForm() {
         body: JSON.stringify({
           anon_identifier: anonIdentifier,
           feedback_text: feedbackText,
-          context_text: feedbackContext, // Ensure backend expects context_text
-          anon_email: emailOptIn,         // Ensure backend expects anon_email
+          context_text: feedbackContext,
+          anon_email: emailOptIn,
         }),
       });
 
@@ -51,7 +60,6 @@ function FeedbackForm() {
 
       if (response.ok) {
         setMessage(result.message || "Makasih ya feedbacknya! Udah kesimpen nih.");
-        // Reset form
         setStep(1);
         setAnonIdentifier('');
         setFeedbackText('');
@@ -68,6 +76,18 @@ function FeedbackForm() {
     }
   };
 
+  // Fallback if userId is somehow not provided, though FeedbackPage should handle this.
+  if (!userId) {
+    return (
+      <main>
+        <section className="feedback-form-container">
+          <h2>Error</h2>
+          <p>Waduh, kayaknya ada yang salah sama linknya atau user ID tidak ditemukan.</p>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <>
       <header>
@@ -75,9 +95,7 @@ function FeedbackForm() {
       </header>
       <main>
         <section className="feedback-form-container">
-          <h2>Kasih Feedback Anonim Dong</h2>
-          {/* Example of how the link might be displayed if needed, though the form uses the URL's link_id */}
-          {/* <p>Memberi feedback untuk link: /f/{window.location.pathname.split('/').pop()}</p> */}
+          <h2>Kasih Feedback Anonim Dong {targetUserName ? `buat ${targetUserName}` : ''}</h2>
           
           <form onSubmit={handleSubmit}>
             {step === 1 && (

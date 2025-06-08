@@ -1,11 +1,18 @@
 // src/pages/FeedbackPage.tsx
 import React from 'react';
-// We will rename App.tsx to FeedbackForm.tsx and import it here
-import FeedbackForm from '../components/FeedbackForm'; 
+import { useParams, Navigate } from 'react-router-dom';
+import FeedbackForm from '../components/FeedbackForm';
 
 const FeedbackPage: React.FC = () => {
+  const { userId } = useParams<{ userId: string }>();
+
+  if (!userId) {
+    console.warn("No userId found in URL, redirecting to landing page.");
+    return <Navigate to="/" replace />;
+  }
+
   return (
-    <FeedbackForm />
+    <FeedbackForm userId={userId} />
   );
 };
 
