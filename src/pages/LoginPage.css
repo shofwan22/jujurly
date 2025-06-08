@@ -66,7 +66,7 @@
   }
   
   .login-form .form-group input::placeholder {
-    color: #aaa;
+    color: #888; /* Darkened placeholder color */
     font-size: 14px; /* Adjusted placeholder font size */
   }
   

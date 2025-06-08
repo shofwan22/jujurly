@@ -1,5 +1,6 @@
 // src/pages/DashboardPage.tsx
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './DashboardPage.css'; // We'll create this CSS file
 
 // Placeholder for actual authentication and data fetching logic
@@ -55,6 +56,13 @@ const DashboardPage: React.FC = () => {
   const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  // Function to handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('userData'); // Clear user data
+    navigate('/login'); // Redirect to login page
+  };
 
   useEffect(() => {
     if (isAuthenticated && username) {
@@ -97,6 +105,7 @@ const DashboardPage: React.FC = () => {
       <header className="dashboard-header">
         <h1>Dashboard Punya {username}</h1>
         <p>Link spesial buat kamu bagiin: <a href={feedbackLink} target="_blank" rel="noopener noreferrer">{feedbackLink}</a></p>
+        <button onClick={handleLogout} className="logout-button">Logout</button> {/* Add logout button */}
       </header>
       <main className="dashboard-main">
         <h2>Ini Dia Feedback Buat Kamu:</h2>

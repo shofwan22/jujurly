@@ -116,7 +116,7 @@ input[type="text"]::placeholder,
 input[type="email"]::placeholder,
 textarea::placeholder {
   font-size: 0.85rem; /* Smaller font size for placeholders */
-  color: #90949c; /* Lighter color for placeholders */
+  color: #888; /* Darkened placeholder color for better visibility */
 }
 
 textarea {

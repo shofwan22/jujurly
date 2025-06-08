@@ -11,7 +11,7 @@ import UserLookupPage from './pages/UserLookupPage';
 function App() {
   // Mock authentication check
   // In a real app, this would involve checking a token, context, or similar
-  const isAuthenticated = !!localStorage.getItem('mockUserToken'); 
+  const isAuthenticated = !!localStorage.getItem('userData'); 
 
   return (
     <Router>
