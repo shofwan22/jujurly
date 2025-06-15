@@ -100,7 +100,7 @@ function FeedbackForm({ userId }: FeedbackFormProps) {
           <form onSubmit={handleSubmit}>
             {step === 1 && (
               <div>
-                <label htmlFor="anonIdentifier">Kenal gue darimana? atau siapa nih?</label>
+                <label htmlFor="anonIdentifier">Kenal doi darimana? atau siapa nih?</label>
                 <small className="label-subtitle">lo boleh kasih tau nama, atau stay anon, tapi kabarin elu kenal dia dimana. Biar apa? Biar AI kita bisa paham, terus dia kita kasih paham LOL</small>
                 <input 
                   type="text" 
@@ -117,11 +117,11 @@ function FeedbackForm({ userId }: FeedbackFormProps) {
             {step === 2 && (
               <div>
                 <label htmlFor="feedbackText">yang pengen lo sampein</label>
-                <small className="label-subtitle">santai sih, doi ga bisa liat langsung, tunjukkin aja semua yang lo rasain ke dia</small>
+                <small className="label-subtitle">santai sih, doi ga bisa liat langsung, tunjukkin aja semua yang lo rasain ke dia, mengumpat bila perlu</small>
                 <textarea 
                   id="feedbackText" 
                   rows={5} 
-                  placeholder="'Jujurly... Gue suka cara lo presentasi' atau 'Jujurly... parah banget, kerjaan kacau babiii'" 
+                  placeholder="'Gue suka cara lo presentasi' atau 'parah banget, kerjaan kacau babiii'" 
                   value={feedbackText}
                   onChange={(e) => setFeedbackText(e.target.value)}
                   required
@@ -146,7 +146,8 @@ function FeedbackForm({ userId }: FeedbackFormProps) {
 
             {step === 4 && (
               <div>
-                <label htmlFor="emailOptIn">Email lo (opsional, biar dikabarin kalo feedback lo dibaca):</label>
+                <label htmlFor="emailOptIn">Email lo (opsional):</label>
+                <small className="label-subtitle">doi ga bisa liat email lo, ini buat persiapan future feature: kita bisa email ke lo buat ngasih tau pas feedback lo dibaca sama orangnya</small>
                 <input 
                   type="email" 
                   id="emailOptIn" 

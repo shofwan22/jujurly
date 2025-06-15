@@ -36,13 +36,15 @@ const LandingPage: React.FC = () => {
           <button onClick={handleCollectFeedbackClick} className="landing-button">
             Mau Kumpulin Feedback
           </button>
-          <Link to="/ke" className="landing-button landing-button-secondary">
+          <Link to="/ke" className="landing-button-secondary">
             Mau Kasih Feedback
           </Link>
         </div>
+        <p className="landing-footer">Platform Honesty as a Service (HaaS) pertama di Indonesia!</p>
         <p className="landing-info">
           Kalau mau kasih feedback, pastiin kamu punya link unik dari orangnya, atau tau usernamenya ya!
         </p>
+
         <p className="landing-info">
           Format:  <a href="https://jujur.ly/ke/iganarendra" target="_blank" rel="noopener noreferrer">https://jujur.ly/ke/username</a>    
         </p>

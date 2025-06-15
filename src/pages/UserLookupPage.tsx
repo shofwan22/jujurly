@@ -24,10 +24,10 @@ const UserLookupPage: React.FC = () => {
       
       if (response.ok) {
         const data = await response.json();
-        if (data.link_id) {
-          // Navigate to the feedback page using the link_id
-          // Assuming your feedback form page is at /f/:linkId
-          navigate(`/f/${data.link_id}`);
+        if (data.user_identifier) {
+          // console.log(data)
+          // Navigate to the feedback page using anything provided by the backend (username or user_id)
+          navigate(`/ke/${data.user_identifier}`);
         } else {
           // Should not happen if response.ok and backend sends link_id
           setError("Gagal mendapatkan link feedback untuk pengguna ini.");

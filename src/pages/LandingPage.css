@@ -53,17 +53,30 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.landing-button-secondary {
+  display: inline-block;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #36a420;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  min-width: 210px; /* Ensure buttons have a decent width */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .landing-button:hover {
   background-color: #166fe5;
   transform: translateY(-2px);
 }
 
-.landing-button-secondary {
-  background-color: #42b72a; /* Green for giving feedback */
-}
-
 .landing-button-secondary:hover {
   background-color: #36a420;
+  transform: translateY(-2px);
+  color:#fff
 }
 
 .landing-info {
