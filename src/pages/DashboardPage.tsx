@@ -6,7 +6,7 @@ import './DashboardPage.css'; // We'll create this CSS file
 // Placeholder for actual authentication and data fetching logic
 const isAuthenticated = true; // Assume user is logged in for now
 const username = "iganarendra"; // Placeholder username
-const API_BASE_URL = 'http://localhost:5001'; // Backend API base URL
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 interface FeedbackItem {
   id: number;
@@ -44,7 +44,7 @@ const getSentimentClass = (sentimentString: string): string => {
 // Updated API function to fetch data from the backend
 const fetchFeedbacksForUser = async (user: string): Promise<FeedbackItem[]> => {
   console.log(`Fetching feedback for ${user} from backend...`);
-  const response = await fetch(`${API_BASE_URL}/api/users/${user}/feedbacks`);
+  const response = await fetch(`${API_URL}/api/users/${user}/feedbacks`);
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ message: 'Failed to fetch feedbacks and parse error' }));
     throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
