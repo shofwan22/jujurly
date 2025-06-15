@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './UserLookupPage.css';
 
 const UserLookupPage: React.FC = () => {
   const [targetUser, setTargetUser] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Added loading state
+  const [isLoading, setIsLoading] = useState(false);
+  const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
-  const handleSubmit = async (event: React.FormEvent) => { // Made async
+  React.useEffect(() => {
+    if (location.state && location.state.userNotFound) {
+      setError('Username atau ID pengguna tidak ditemukan.');
+    }
+  }, [location.state]);
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!targetUser.trim()) {
       setError('Username atau ID pengguna jangan lupa diisi ya.');
@@ -25,11 +33,9 @@ const UserLookupPage: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         if (data.user_identifier) {
-          // console.log(data)
-          // Navigate to the feedback page using anything provided by the backend (username or user_id)
+          setUserData(data);
           navigate(`/ke/${data.user_identifier}`);
         } else {
-          // Should not happen if response.ok and backend sends link_id
           setError("Gagal mendapatkan link feedback untuk pengguna ini.");
         }
       } else {
@@ -51,6 +57,12 @@ const UserLookupPage: React.FC = () => {
         <p className="subtitle">Tulis username atau ID unik orang yang mau kamu kasih feedback.</p>
         <form onSubmit={handleSubmit} className="user-lookup-form">
           {error && <p className="error-message">{error}</p>}
+          {userData && (
+            <div className="user-data">
+              <h2>User Data:</h2>
+              <pre>{JSON.stringify(userData, null, 2)}</pre>
+            </div>
+          )}
           <div className="form-group">
             <label htmlFor="targetUser">Username atau ID Pengguna</label>
             <input
@@ -59,7 +71,7 @@ const UserLookupPage: React.FC = () => {
               value={targetUser}
               onChange={(e) => setTargetUser(e.target.value)}
               placeholder="cth:iganarendra atau user123abc"
-              disabled={isLoading} // Disable input while loading
+              disabled={isLoading}
               autoFocus
             />
           </div>
