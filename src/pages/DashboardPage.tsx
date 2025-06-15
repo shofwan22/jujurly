@@ -5,7 +5,7 @@ import './DashboardPage.css'; // We'll create this CSS file
 
 // Placeholder for actual authentication and data fetching logic
 const isAuthenticated = true; // Assume user is logged in for now
-const username = "iganarendra"; // Placeholder username
+// const username = "iganarendra"; // Placeholder username
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 interface FeedbackItem {
@@ -40,7 +40,6 @@ const getSentimentClass = (sentimentString: string): string => {
   return 'sentiment-netral';
 };
 
-
 // Updated API function to fetch data from the backend
 const fetchFeedbacksForUser = async (user: string): Promise<FeedbackItem[]> => {
   console.log(`Fetching feedback for ${user} from backend...`);
@@ -66,23 +65,30 @@ const DashboardPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isAuthenticated && username) {
+    if (isAuthenticated) {
       setIsLoading(true);
       setError(null);
-      fetchFeedbacksForUser(username)
-        .then(data => {
-          setFeedbacks(data);
-          setIsLoading(false);
-        })
-        .catch(err => {
-          console.error("Failed to fetch feedbacks:", err);
-          setError(err.message || "Duh, gagal ngambil feedback nih. Coba lagi nanti ya.");
-          setIsLoading(false);
-        });
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      const username = userData.username;
+      if (username) {
+        fetchFeedbacksForUser(username)
+          .then(data => {
+            setFeedbacks(data);
+            setIsLoading(false);
+          })
+          .catch(err => {
+            console.error("Failed to fetch feedbacks:", err);
+            setError(err.message || "Duh, gagal ngambil feedback nih. Coba lagi nanti ya.");
+            setIsLoading(false);
+          });
+      } else {
+        setError("Username tidak ditemukan. Silakan login kembali.");
+        setIsLoading(false);
+      }
     } else {
-      setIsLoading(false); // Not authenticated or no username
+      setIsLoading(false); // Not authenticated
     }
-  }, [username]); // Refetch if username changes
+  }, []); // Refetch if username changes
 
   if (!isAuthenticated) {
     // Later, this could redirect to a login/signup page
@@ -99,6 +105,8 @@ const DashboardPage: React.FC = () => {
     );
   }
 
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  const username = userData.username;
   const feedbackLink = `https://jujur.ly/ke/${username}`;
 
   return (
