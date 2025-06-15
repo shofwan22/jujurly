@@ -99,7 +99,7 @@ const DashboardPage: React.FC = () => {
     );
   }
 
-  const feedbackLink = `https://jujur.ly/ke/${username}`;
+  const feedbackLink = `https://jujurly.space/ke/${username}`;
 
   return (
     <div className="dashboard-container">

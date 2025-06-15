@@ -35,7 +35,7 @@ function FeedbackForm({ userId }: FeedbackFormProps) {
     setMessage('');
 
     if (!userId) { // This check might be redundant if FeedbackPage ensures userId is always passed
-      setMessage("Error: User ID tidak ditemukan. Pastikan URLnya benar, contoh: jujur.ly/ke/namauser");
+      setMessage("Error: User ID tidak ditemukan. Pastikan URLnya benar, contoh: jujurly.space/ke/namauser");
       setIsLoading(false);
       return;
     }

@@ -46,7 +46,7 @@ const LandingPage: React.FC = () => {
         </p>
 
         <p className="landing-info">
-          Format:  <a href="https://jujur.ly/ke/iganarendra" target="_blank" rel="noopener noreferrer">https://jujur.ly/ke/username</a>    
+          Format:  <a href="https://jujurly.space/ke/iganarendra" target="_blank" rel="noopener noreferrer">https://jujurly.space/ke/username</a>    
         </p>
       </main>
       <footer className="landing-footer">
