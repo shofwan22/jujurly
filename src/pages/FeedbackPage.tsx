@@ -1,12 +1,13 @@
 // src/pages/FeedbackPage.tsx
 import React, { useEffect, useState } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, useNavigate } from 'react-router-dom';
 import FeedbackForm from '../components/FeedbackForm';
 
 const FeedbackPage: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const [userExists, setUserExists] = useState<boolean | null>(null);
   const [checking, setChecking] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!userId) {
@@ -21,7 +22,7 @@ const FeedbackPage: React.FC = () => {
         throw new Error('User not found');
       })
       .then(data => {
-        if (data && data.link_id) {
+        if (data && data.user_identifier) {
           setUserExists(true);
         } else {
           setUserExists(false);
@@ -31,6 +32,12 @@ const FeedbackPage: React.FC = () => {
       .finally(() => setChecking(false));
   }, [userId]);
 
+  useEffect(() => {
+    if (userExists === false) {
+      navigate('/ke', { state: { userNotFound: true } });
+    }
+  }, [userExists, navigate]);
+
   if (!userId) {
     console.warn("No userId found in URL, redirecting to landing page.");
     return <Navigate to="/" replace />;
@@ -39,7 +46,7 @@ const FeedbackPage: React.FC = () => {
     return <div style={{textAlign: 'center', marginTop: '2rem'}}>Mengecek pengguna...</div>;
   }
   if (userExists === false) {
-    return <Navigate to="/user-lookup" replace />;
+    return null; // Will redirect
   }
   return (
     <FeedbackForm userId={userId} />
