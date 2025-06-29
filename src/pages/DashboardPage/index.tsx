@@ -6,6 +6,7 @@ import { formatTimestamp } from '../../utils/formatData';
 
 const DashboardPage: React.FC = () => {
   const { isAuthenticated, feedbacks, isLoading, error } = useDashboard();
+  const domain = window.location.origin;
 
   if (!isAuthenticated) {
     window.location.href = '/login';
@@ -13,7 +14,7 @@ const DashboardPage: React.FC = () => {
 
   const userData = JSON.parse(localStorage.getItem('userData') || '{}');
   const username = userData.username;
-  const feedbackLink = `https://jujur.ly/ke/${username}`;
+  const feedbackLink = `${domain}/ke/${username}`;
 
   return (
     <DashboardLayout link={feedbackLink}>
