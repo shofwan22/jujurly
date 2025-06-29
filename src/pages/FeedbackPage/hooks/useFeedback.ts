@@ -1,9 +1,7 @@
-// src/pages/FeedbackPage.tsx
-import React, { useEffect, useState } from 'react';
-import { useParams, Navigate, useNavigate } from 'react-router-dom';
-import FeedbackForm from '../components/FeedbackForm';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 
-const FeedbackPage: React.FC = () => {
+const useFeedback = () => {
   const { userId } = useParams<{ userId: string }>();
   const [userExists, setUserExists] = useState<boolean | null>(null);
   const [checking, setChecking] = useState(true);
@@ -17,11 +15,11 @@ const FeedbackPage: React.FC = () => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
     setChecking(true);
     fetch(`${API_URL}/api/user/lookup/${userId}`)
-      .then(res => {
+      .then((res) => {
         if (res.ok) return res.json();
         throw new Error('User not found');
       })
-      .then(data => {
+      .then((data) => {
         if (data && data.user_identifier) {
           setUserExists(true);
         } else {
@@ -38,19 +36,11 @@ const FeedbackPage: React.FC = () => {
     }
   }, [userExists, navigate]);
 
-  if (!userId) {
-    console.warn("No userId found in URL, redirecting to landing page.");
-    return <Navigate to="/" replace />;
-  }
-  if (checking) {
-    return <div style={{textAlign: 'center', marginTop: '2rem'}}>Mengecek pengguna...</div>;
-  }
-  if (userExists === false) {
-    return null; // Will redirect
-  }
-  return (
-    <FeedbackForm userId={userId} />
-  );
+  return {
+    userId,
+    userExists,
+    checking,
+  };
 };
 
-export default FeedbackPage;
+export default useFeedback;
